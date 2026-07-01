@@ -1,9 +1,14 @@
 defmodule PinterestApiWeb.Schema.Resolvers.LogResolver do
   alias PinterestApi.Logs
   alias PinterestApi.Pins
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
-  def logs_for_pin(pin, _args, _resolution) do
-    {:ok, Logs.list_logs_for_pin(pin.id)}
+  def logs_for_pin(pin, _args, %{context: %{loader: loader}}) do
+    loader
+    |> Dataloader.load(:db, Logs.Log, pin_id: pin.id)
+    |> on_load(fn loader ->
+      {:ok, Dataloader.get(loader, :db, Logs.Log, pin_id: pin.id) || []}
+    end)
   end
 
   def create_log(_parent, %{pin_id: pin_id, description: description}, %{

@@ -10,6 +10,18 @@ defmodule PinterestApiWeb.Schema do
   import_types(PinterestApiWeb.Schema.Types.PinTypes)
   import_types(PinterestApiWeb.Schema.Types.LogTypes)
 
+  def context(ctx) do
+    loader =
+      Dataloader.new()
+      |> Dataloader.add_source(:db, PinterestApi.DataloaderSource.data())
+
+    Map.put(ctx, :loader, loader)
+  end
+
+  def plugins do
+    [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
+  end
+
   query do
     field :me, :user do
       resolve(&UserResolver.me/3)

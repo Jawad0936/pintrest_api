@@ -2,26 +2,24 @@ defmodule PinterestApiWeb.Schema.Resolvers.PinResolver do
   alias PinterestApi.Pins
   alias PinterestApi.Repo
   import Ecto.Query
+  import Absinthe.Resolution.Helpers, only: [on_load: 2]
 
-  def pins_for_user(user, _args, _resolution) do
-    pins =
-      Pins.Pin
-      |> where([p], p.user_id == ^user.id)
-      |> order_by([p], desc: p.inserted_at)
-      |> Repo.all()
 
-    {:ok, pins}
-  end
+ def pins_for_user(user, _args, %{context: %{loader: loader}}) do
+  loader
+  |> Dataloader.load(:db, {:many, Pins.Pin}, user_id: user.id)
+  |> on_load(fn loader ->
+    {:ok, Dataloader.get(loader, :db, {:many, Pins.Pin}, user_id: user.id)}
+  end)
+end
 
-  def pins_for_board(board, _args, _resolution) do
-    pins =
-      Pins.Pin
-      |> where([p], p.board_id == ^board.id)
-      |> order_by([p], desc: p.inserted_at)
-      |> Repo.all()
-
-    {:ok, pins}
-  end
+def pins_for_board(board, _args, %{context: %{loader: loader}}) do
+  loader
+  |> Dataloader.load(:db, {:many, Pins.Pin}, board_id: board.id)
+  |> on_load(fn loader ->
+    {:ok, Dataloader.get(loader, :db, {:many, Pins.Pin}, board_id: board.id)}
+  end)
+end
 
   def list_pins(_parent, args, %{context: %{current_user: user}}) do
     opts =
