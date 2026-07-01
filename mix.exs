@@ -54,7 +54,6 @@ defmodule PinterestApi.MixProject do
       {:ueberauth_google, "~> 0.12"},
       {:ueberauth, "~> 0.10"},
       {:pbkdf2_elixir, "~> 2.0"},
-
       {:cors_plug, "~> 3.0"}
     ]
   end

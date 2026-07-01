@@ -23,7 +23,15 @@ defmodule PinterestApi.Pins.Pin do
 
   def changeset(pin, attrs) do
     pin
-    |> cast(attrs, [:description, :category, :status, :deadline, :completed_at, :user_id, :board_id])
+    |> cast(attrs, [
+      :description,
+      :category,
+      :status,
+      :deadline,
+      :completed_at,
+      :user_id,
+      :board_id
+    ])
     |> validate_required([:description, :category, :user_id])
     |> validate_inclusion(:status, @statuses)
     |> foreign_key_constraint(:user_id)
