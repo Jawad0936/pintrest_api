@@ -48,6 +48,8 @@ defmodule PinterestApi.MixProject do
       {:absinthe_plug, "~> 1.5"},
       {:absinthe_phoenix, "~> 2.0"},
       {:dataloader, "~> 2.0"},
+      {:esbuild, "~> 0.8", runtime: Mix.env() == :dev},
+      {:tailwind, "~> 0.2", runtime: Mix.env() == :dev},
 
       # Auth (same pattern as Focus Tracker)
       {:guardian, "~> 2.4"},
