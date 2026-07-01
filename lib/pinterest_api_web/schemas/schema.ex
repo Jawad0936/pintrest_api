@@ -2,6 +2,7 @@ defmodule PinterestApiWeb.Schema do
   use Absinthe.Schema
 
   alias PinterestApiWeb.Schema.Resolvers.{UserResolver, PinResolver, BoardResolver, LogResolver}
+  alias PinterestApiWeb.Schema.Middleware
 
   import_types(Absinthe.Type.Custom)
   import_types(PinterestApiWeb.Schema.Types.CustomTypes)
@@ -20,6 +21,14 @@ defmodule PinterestApiWeb.Schema do
 
   def plugins do
     [Absinthe.Middleware.Dataloader | Absinthe.Plugin.defaults()]
+  end
+
+  def middleware(middleware, _field, %{identifier: :mutation}) do
+    [Middleware.Auth | middleware] ++ [Middleware.ErrorHandler]
+  end
+
+  def middleware(middleware, _field, _object) do
+    middleware ++ [Middleware.ErrorHandler]
   end
 
   query do

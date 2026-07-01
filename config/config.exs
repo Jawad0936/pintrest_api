@@ -60,6 +60,10 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+config :pinterest_api, PinterestApi.Guardian,
+  issuer: "pinterest_api",
+  secret_key: "EEfbO5riXR5Aeo87uHqg6W7BnfPsCuV2VBnkPC8ZRA_IPuudXLEo2qHks3luFZ0T"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"
