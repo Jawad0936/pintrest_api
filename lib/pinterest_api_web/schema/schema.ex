@@ -32,7 +32,6 @@ defmodule PinterestApiWeb.Schema do
     middleware ++ [Middleware.ErrorHandler]
   end
 
-
   query do
     field :me, :user do
       resolve(&UserResolver.me/3)
@@ -66,7 +65,6 @@ defmodule PinterestApiWeb.Schema do
       arg(:input, non_null(:create_pin_input))
       resolve(&PinResolver.create_pin/3)
     end
-
 
     field :update_pin, non_null(:pin_payload) do
       arg(:id, non_null(:id))

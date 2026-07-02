@@ -13,7 +13,9 @@ defmodule PinterestApiWeb.AuthController do
       {:error, changeset} ->
         errors =
           Ecto.Changeset.traverse_errors(changeset, fn {msg, opts} ->
-            Enum.reduce(opts, msg, fn {k, v}, acc -> String.replace(acc, "%{#{k}}", to_string(v)) end)
+            Enum.reduce(opts, msg, fn {k, v}, acc ->
+              String.replace(acc, "%{#{k}}", to_string(v))
+            end)
           end)
 
         conn

@@ -13,10 +13,10 @@ defmodule PinterestApi.Accounts.Auth do
     end
   end
 
- def token_for_user(user) do
-  case Guardian.encode_and_sign(user) do
-    {:ok, token, _claims} -> {:ok, token}
-    error -> error
+  def token_for_user(user) do
+    case Guardian.encode_and_sign(user) do
+      {:ok, token, _claims} -> {:ok, token}
+      error -> error
+    end
   end
-end
 end
