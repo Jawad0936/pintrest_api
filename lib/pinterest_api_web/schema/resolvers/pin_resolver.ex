@@ -44,13 +44,17 @@ defmodule PinterestApiWeb.Schema.Resolvers.PinResolver do
   def get_pin(_parent, _args, _resolution), do: {:error, "Not authenticated"}
 
   def create_pin(_parent, %{input: input}, %{context: %{current_user: user}}) do
-    attrs = Map.put(input, :user_id, user.id)
+  attrs = Map.put(input, :user_id, user.id)
 
-    case Pins.create_pin(attrs) do
-      {:ok, pin} -> {:ok, %{pin: pin, errors: nil}}
-      {:error, changeset} -> {:ok, %{pin: nil, errors: format_errors(changeset)}}
-    end
+  case Pins.create_pin(attrs) do
+    {:ok, pin} ->
+      Absinthe.Subscription.publish(PinterestApiWeb.Endpoint, pin, pin_created: user.id)
+      {:ok, %{pin: pin, errors: nil}}
+
+    {:error, changeset} ->
+      {:ok, %{pin: nil, errors: format_errors(changeset)}}
   end
+end
 
   def create_pin(_parent, _args, _resolution), do: {:error, "Not authenticated"}
 
@@ -83,16 +87,17 @@ defmodule PinterestApiWeb.Schema.Resolvers.PinResolver do
   def delete_pin(_parent, _args, _resolution), do: {:error, "Not authenticated"}
 
   def complete_pin(_parent, %{id: id}, %{context: %{current_user: user}}) do
-    with %Pins.Pin{} = pin <- Pins.get_pin(id),
-         true <- pin.user_id == user.id,
-         {:ok, completed} <- Pins.complete_pin(pin) do
-      {:ok, %{pin: completed, errors: nil}}
-    else
-      nil -> {:ok, %{pin: nil, errors: [%{field: "id", message: "Pin not found"}]}}
-      false -> {:ok, %{pin: nil, errors: [%{field: "id", message: "Not authorized"}]}}
-      {:error, changeset} -> {:ok, %{pin: nil, errors: format_errors(changeset)}}
-    end
+  with %Pins.Pin{} = pin <- Pins.get_pin(id),
+       true <- pin.user_id == user.id,
+       {:ok, completed} <- Pins.complete_pin(pin) do
+    Absinthe.Subscription.publish(PinterestApiWeb.Endpoint, completed, pin_completed: user.id)
+    {:ok, %{pin: completed, errors: nil}}
+  else
+    nil -> {:ok, %{pin: nil, errors: [%{field: "id", message: "Pin not found"}]}}
+    false -> {:ok, %{pin: nil, errors: [%{field: "id", message: "Not authorized"}]}}
+    {:error, changeset} -> {:ok, %{pin: nil, errors: format_errors(changeset)}}
   end
+end
 
   def complete_pin(_parent, _args, _resolution), do: {:error, "Not authenticated"}
 

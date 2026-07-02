@@ -10,6 +10,7 @@ defmodule PinterestApiWeb.Schema do
   import_types(PinterestApiWeb.Schema.Types.UserTypes)
   import_types(PinterestApiWeb.Schema.Types.PinTypes)
   import_types(PinterestApiWeb.Schema.Types.LogTypes)
+  import_types(PinterestApiWeb.Schema.Subscriptions.PinSubscriptions)
 
   def context(ctx) do
     loader =
@@ -30,6 +31,7 @@ defmodule PinterestApiWeb.Schema do
   def middleware(middleware, _field, _object) do
     middleware ++ [Middleware.ErrorHandler]
   end
+
 
   query do
     field :me, :user do
@@ -65,6 +67,7 @@ defmodule PinterestApiWeb.Schema do
       resolve(&PinResolver.create_pin/3)
     end
 
+
     field :update_pin, non_null(:pin_payload) do
       arg(:id, non_null(:id))
       arg(:input, non_null(:update_pin_input))
@@ -97,5 +100,9 @@ defmodule PinterestApiWeb.Schema do
       arg(:id, non_null(:id))
       resolve(&LogResolver.delete_log/3)
     end
+  end
+
+  subscription do
+    import_fields(:pin_subscriptions)
   end
 end

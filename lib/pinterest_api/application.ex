@@ -15,7 +15,8 @@ defmodule PinterestApi.Application do
       # Start a worker by calling: PinterestApi.Worker.start_link(arg)
       # {PinterestApi.Worker, arg},
       # Start to serve requests, typically the last entry
-      PinterestApiWeb.Endpoint
+      PinterestApiWeb.Endpoint,
+      {Absinthe.Subscription, PinterestApiWeb.Endpoint}
     ]
 
     # See https://hexdocs.pm/elixir/Supervisor.html

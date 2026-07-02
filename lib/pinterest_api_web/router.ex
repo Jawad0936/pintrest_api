@@ -28,6 +28,7 @@ defmodule PinterestApiWeb.Router do
 
     forward "/", Absinthe.Plug.GraphiQL,
       schema: PinterestApiWeb.Schema,
-      interface: :playground
+      interface: :playground,
+      socket: PinterestApiWeb.UserSocket
   end
 end
